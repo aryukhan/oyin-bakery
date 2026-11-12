@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bakery</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#ffd9a8,#fff2d8);min-height:100vh;color:#4b2e20}
+button{font-family:inherit;cursor:pointer;border:0}
+header{height:80px;background:#8b4b2f;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 30px;box-shadow:0 4px 15px #0003}
+.logo{font-size:28px;font-weight:bold}.money{background:#fff;color:#7a421f;padding:12px 20px;border-radius:25px;font-weight:bold}
+.container{max-width:1100px;margin:25px auto;padding:15px}
+.welcome{text-align:center;margin-bottom:25px}.welcome h1{font-size:34px}.welcome p{margin-top:8px;color:#805a45}
+.ingredients,.products,.order-list{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ingredient,.product{background:#fff;border-radius:18px;padding:20px;text-align:center;box-shadow:0 5px 18px #8b4b2f22;transition:.2s}
+.ingredient:hover,.product:hover{transform:translateY(-4px)}
+.emoji{font-size:55px}.ingredient h3,.product h3{margin:8px 0}.ingredient p,.product p{color:#777;margin-bottom:12px}
+.buy{background:#e69a4a;color:#fff;padding:10px 18px;border-radius:12px;font-weight:bold}
+.kitchen{background:#fffaf4;border-radius:25px;padding:25px;box-shadow:0 8px 25px #8b4b2f25;margin:25px 0}.kitchen h2{text-align:center;margin-bottom:20px}
+.product{border:2px solid #f0c9a3}.product .big{font-size:65px}.product p{font-size:14px;min-height:35px}
+.cook{margin-top:15px;background:#6b9e4e;color:#fff;width:100%;padding:12px;border-radius:12px;font-size:16px;font-weight:bold}
+.orders{background:#8b4b2f;color:#fff;border-radius:22px;padding:22px}.orders h2{text-align:center;margin-bottom:15px}
+.order{background:#fff;color:#4b2e20;border-radius:15px;padding:15px;text-align:center}.order-icon{font-size:42px}.order p{margin:7px 0}
+.order button{margin-top:10px;background:#e69a4a;color:#fff;padding:9px 15px;border-radius:10px;font-weight:bold}
+.message{position:fixed;top:95px;right:20px;background:#fff;color:#4b2e20;padding:15px 20px;border-radius:15px;box-shadow:0 5px 25px #0003;opacity:0;transform:translateX(100px);transition:.3s;z-index:10}
+.message.show{opacity:1;transform:translateX(0)}
+@media(max-width:750px){.ingredients,.products,.order-list{grid-template-columns:1fr}header{padding:0 15px}.logo{font-size:20px}.container{margin:15px auto}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">🧁 My Bakery</div>
+<div class="money">💰 <span id="money">100</span> so‘m</div>
+</header>
+
+<div class="container">
+<div class="welcome">
+<h1>🍰 Shirin Nonvoyxona</h1>
+<p>Masalliqlarni sotib oling, shirinlik tayyorlang va buyurtmalarni bajaring!</p>
+</div>
+
+<div class="ingredients">
+<div class="ingredient"><div class="emoji">🌾</div><h3>Un</h3><p>Narxi: 10 so‘m</p><button class="buy" onclick="buyIngredient('flour')">Sotib olish</button></div>
+<div class="ingredient"><div class="emoji">🥚</div><h3>Tuxum</h3><p>Narxi: 15 so‘m</p><button class="buy" onclick="buyIngredient('egg')">Sotib olish</button></div>
+<div class="ingredient"><div class="emoji">🍫</div><h3>Shokolad</h3><p>Narxi: 20 so‘m</p><button class="buy" onclick="buyIngredient('chocolate')">Sotib olish</button></div>
+</div>
+
+<div class="kitchen">
+<h2>👩‍🍳 Oshxona</h2>
+<div class="products">
+<div class="product"><div class="big">🍞</div><h3>Non</h3><p>1 🌾 Un kerak</p><button class="cook" onclick="cook('bread')">🍞 Non pishirish</button></div>
+<div class="product"><div class="big">🧁</div><h3>Keks</h3><p>1 🌾 Un + 1 🥚 Tuxum</p><button class="cook" onclick="cook('cake')">🧁 Keks pishirish</button></div>
+<div class="product"><div class="big">🍫</div><h3>Shokoladli tort</h3><p>1 🌾 Un + 1 🥚 Tuxum + 1 🍫 Shokolad</p><button class="cook" onclick="cook('choco')">🍫 Tort pishirish</button></div>
+</div>
+</div>
+
+<div class="orders">
+<h2>📋 Mijozlar buyurtmalari</h2>
+<div class="order-list">
+<div class="order"><div class="order-icon">🍞</div><h3>Non buyurtmasi</h3><p>Mukofot: 30 so‘m</p><button onclick="sell('bread')">Yetkazib berish</button></div>
+<div class="order"><div class="order-icon">🧁</div><h3>Keks buyurtmasi</h3><p>Mukofot: 50 so‘m</p><button onclick="sell('cake')">Yetkazib berish</button></div>
+<div class="order"><div class="order-icon">🍫</div><h3>Tort buyurtmasi</h3><p>Mukofot: 90 so‘m</p><button onclick="sell('choco')">Yetkazib berish</button></div>
+</div>
+</div>
+</div>
+
+<div class="message" id="message"></div>
+
+<script>
+let money=100;
+let inventory={flour:0,egg:0,chocolate:0,bread:0,cake:0,choco:0};
+const moneyText=document.getElementById("money"),message=document.getElementById("message");
+function updateMoney(){moneyText.textContent=money}
+function showMessage(text){message.textContent=text;message.classList.add("show");setTimeout(()=>message.classList.remove("show"),1800)}
+function buyIngredient(type){
+let price=type==="flour"?10:type==="egg"?15:20;
+let name=type==="flour"?"Un":type==="egg"?"Tuxum":"Shokolad";
+if(money<price){showMessage("❌ Pul yetarli emas!");return}
+money-=price;inventory[type]++;updateMoney();showMessage("✅ "+name+" sotib olindi!");
+}
+function cook(type){
+if(type==="bread"){
+if(inventory.flour<1){showMessage("❌ 1 ta un kerak!");return}
+inventory.flour--;inventory.bread++;showMessage("🍞 Non tayyor!");
+}
+if(type==="cake"){
+if(inventory.flour<1||inventory.egg<1){showMessage("❌ Un va tuxum kerak!");return}
+inventory.flour--;inventory.egg--;inventory.cake++;showMessage("🧁 Keks tayyor!");
+}
+if(type==="choco"){
+if(inventory.flour<1||inventory.egg<1||inventory.chocolate<1){showMessage("❌ Un, tuxum va shokolad kerak!");return}
+inventory.flour--;inventory.egg--;inventory.chocolate--;inventory.choco++;showMessage("🍫 Shokoladli tort tayyor!");
+}
+}
+function sell(type){
+let reward=type==="bread"?30:type==="cake"?50:90;
+let name=type==="bread"?"Non":type==="cake"?"Keks":"Shokoladli tort";
+if(inventory[type]<1){showMessage("❌ Sizda tayyor mahsulot yo‘q!");return}
+inventory[type]--;money+=reward;updateMoney();showMessage("🎉 "+name+" sotildi! +"+reward+" so‘m");
+}
+</script>
+</body>
+</html>
